@@ -78,10 +78,22 @@ class ChartFile(object):
 
     """
 
-    __slots__ = ['_path', '_name', '_datetime', '_calendar', '_location',
-        '_latitude', '_longitude', '_altitude', '_country', '_zoneinfo',
-        '_timezone', '_comment', '_keywords', '_dst', '_utcoffset']
-
+    __slots__ = [
+        '_path',
+        '_name',
+        '_datetime',
+        '_calendar',
+        '_location',
+        '_latitude',
+        '_longitude',
+        '_altitude',
+        '_country',
+        '_zoneinfo',
+        '_timezone',
+        '_comment',
+        '_keywords',
+        '_dst',
+        '_utcoffset']
 
     def _get_path(self):
         """Get chart file path (None -> no file).
@@ -408,74 +420,74 @@ class ChartFile(object):
             self._utcoffset = float(hours)
 
     path = property(_get_path, _set_path,
-        doc='Chart file path.')
+                    doc='Chart file path.')
     name = property(_get_name, _set_name,
-        doc='Chart name.')
+                    doc='Chart name.')
     datetime = property(_get_datetime, _set_datetime,
-        doc='Chart date & time.')
+                        doc='Chart date & time.')
     calendar = property(_get_calendar, _set_calendar,
-        doc="Chart calendar ('gregorian'|'julian').")
+                        doc="Chart calendar ('gregorian'|'julian').")
     location = property(_get_location, _set_location,
-        doc='Chart location.')
+                        doc='Chart location.')
     latitude = property(_get_latitude, _set_latitude,
-        doc='Chart latitude.')
+                        doc='Chart latitude.')
     longitude = property(_get_longitude, _set_longitude,
-        doc='Chart longitude.')
+                         doc='Chart longitude.')
     altitude = property(_get_altitude, _set_altitude,
-        doc='Chart altitude.')
+                        doc='Chart altitude.')
     country = property(_get_country, _set_country,
-        doc='Chart country.')
+                       doc='Chart country.')
     zoneinfo = property(_get_zoneinfo, _set_zoneinfo,
-        doc='Chart posix zoneinfo.')
+                        doc='Chart posix zoneinfo.')
     timezone = property(_get_timezone, _set_timezone,
-        doc='Chart standard Utc timezone.')
+                        doc='Chart standard Utc timezone.')
     comment = property(_get_comment, _set_comment,
-        doc='Chart comment.')
+                       doc='Chart comment.')
     keywords = property(_get_keywords, _set_keywords,
-        doc='Chart keywords.')
+                        doc='Chart keywords.')
     dst = property(_get_dst, _set_dst,
-        doc='Chart DST (None|True|False), for ambiguous datetime.')
+                   doc='Chart DST (None|True|False), for ambiguous datetime.')
     utcoffset = property(_get_utcoffset, _set_utcoffset,
-        doc='Chart UTC offset, in hours, for dates < 1900.')
+                         doc='Chart UTC offset, in hours, for dates < 1900.')
 
     def set(self, path=None, name=None, datetime=None, calendar=None,
-        location=None, latitude=None, longitude=None, altitude=None,
-        country=None, zoneinfo=None, timezone=None, comment=None,
-        keywords=None, dst=None, utcoffset=None):
+            location=None, latitude=None, longitude=None, altitude=None,
+            country=None, zoneinfo=None, timezone=None, comment=None,
+            keywords=None, dst=None, utcoffset=None):
         """Set chart properties.
 
         For arguments needing to be set to None, pass empty string ('').
 
         """
-        if path != None:
+        if path is not None:
             self.path = path
-        if name != None:
+        if name is not None:
             self.name = name
-        if datetime != None:
+        if datetime is not None:
             self.datetime = datetime
-        if calendar != None:
+        if calendar is not None:
             self.calendar = calendar
-        if location != None:
+        if location is not None:
             self.location = location
-        if latitude != None:
+        if latitude is not None:
             self.latitude = latitude
-        if longitude != None:
+        if longitude is not None:
             self.longitude = longitude
-        if altitude != None:
+        if altitude is not None:
             self.altitude = altitude
-        if country != None:
+        if country is not None:
             self.country = country
-        if zoneinfo != None:
+        if zoneinfo is not None:
             self.zoneinfo = zoneinfo
-        if timezone != None:
+        if timezone is not None:
             self.timezone = timezone
-        if comment != None:
+        if comment is not None:
             self.comment = comment
-        if keywords != None:
+        if keywords is not None:
             self.keywords = keywords
-        if dst != None:
+        if dst is not None:
             self.dst = dst
-        if utcoffset != None:
+        if utcoffset is not None:
             self.utcoffset = utcoffset
 
     def __init__(self, path=None, set_default=True):
@@ -484,7 +496,7 @@ class ChartFile(object):
         :type path: str or None
         :type set_default: bool
         """
-        if path != None:
+        if path is not None:
             self.parse(path)
         elif set_default:
             self.set_default()
@@ -570,7 +582,7 @@ class ChartFile(object):
         :rtype: bool
         :raise TypeError: path is None
         """
-        if self._path == None:
+        if self._path is None:
             raise TypeError('Missing path.')
         if not overwrite and os.path.exists(self._path):
             return False
@@ -580,7 +592,7 @@ class ChartFile(object):
 
     def remove(self):
         """Remove (delete) xml file."""
-        os.remove(self._path) # may raise OSError
+        os.remove(self._path)  # may raise OSError
         self._path = None
 
     def get_keyword(self, key):
@@ -612,34 +624,38 @@ class ChartFile(object):
         :rtype: xmlutils.Element
         """
         el = xmlutils.Element('ASTROLOGY', {'software': 'Oroboros'},
-            text='\n', tail='\n')
+                              text='\n', tail='\n')
         # comments
         cmt = xmlutils.comment(
-            'Generated by Oroboros, %s UTC' % datetime.utcnow().replace(microsecond=0))
+            'Generated by Oroboros, %s UTC' %
+            datetime.utcnow().replace(
+                microsecond=0))
         cmt.tail = '\n'
         el.append(_etree_elem=cmt)
-        cmt = xmlutils.comment('For user: %s %s' % (cfg.username, cfg.usermail))
+        cmt = xmlutils.comment(
+            'For user: %s %s' %
+            (cfg.username, cfg.usermail))
         cmt.tail = '\n\t'
         el.append(_etree_elem=cmt)
         # data
         el.append('NAME', text=self.name, tail='\n\t')
         el.append('DATETIME',
-            {'calendar': self._calendar if self._calendar != None else '',
-                'utcoffset': self._utcoffset if self._utcoffset != None else '',
-                'dst': self._dst if self._dst != None else ''},
-            self.datetime,
-            '\n\t')
+                  {'calendar': self._calendar if self._calendar is not None else '',
+                   'utcoffset': self._utcoffset if self._utcoffset is not None else '',
+                   'dst': self._dst if self._dst is not None else ''},
+                  self.datetime,
+                  '\n\t')
         el.append('LOCATION',
-            {'latitude': str(self._latitude),
-                'longitude': str(self._longitude),
-                'altitude': self._altitude},
-            self._location,
-            '\n\t')
+                  {'latitude': str(self._latitude),
+                   'longitude': str(self._longitude),
+                   'altitude': self._altitude},
+                  self._location,
+                  '\n\t')
         el.append('COUNTRY',
-            {'zoneinfo': self._zoneinfo,
-                'timezone': self._timezone.utc if self._timezone != None else ''},
-            self._country,
-            '\n\t')
+                  {'zoneinfo': self._zoneinfo,
+                   'timezone': self._timezone.utc if self._timezone is not None else ''},
+                  self._country,
+                  '\n\t')
         el.append('COMMENT', text=self._comment, tail='\n\t')
         el.append('KEYWORDS', self._keywords, tail='\n')
         return el
@@ -649,8 +665,12 @@ class ChartFile(object):
 
         :type elem: xmlutils.Element
         """
-        self.name = elem.get_child_text(tag='NAME').replace('&lt;',
-            '<').replace('&gt;', '>')
+        self.name = elem.get_child_text(
+            tag='NAME').replace(
+            '&lt;',
+            '<').replace(
+            '&gt;',
+            '>')
         dt = elem.get_child(tag='DATETIME')
         self.datetime = dt.text
         self.calendar = dt.get_attr('calendar')
@@ -665,8 +685,12 @@ class ChartFile(object):
         self.country = cty.text
         self.zoneinfo = cty.get_attr('zoneinfo')
         self.timezone = cty.get_attr('timezone')
-        self.comment = elem.get_child_text(tag='COMMENT').replace('&lt;',
-            '<').replace('&gt;', '>')
+        self.comment = elem.get_child_text(
+            tag='COMMENT').replace(
+            '&lt;',
+            '<').replace(
+            '&gt;',
+            '>')
         kw = KeywordsDict()
         for k, v in elem.get_child(tag='KEYWORDS').attributes.items():
             kw[k] = v
@@ -677,20 +701,32 @@ class ChartFile(object):
 
         :rtype: iterator
         """
-        return (x for x in (self._path, self._name, self._datetime,
-            self._calendar, self._location, self._latitude, self._longitude,
-            self._altitude, self._country, self._zoneinfo, self._timezone,
-            self._comment, self._keywords, self._dst, self._utcoffset))
+        return (
+            x for x in (
+                self._path,
+                self._name,
+                self._datetime,
+                self._calendar,
+                self._location,
+                self._latitude,
+                self._longitude,
+                self._altitude,
+                self._country,
+                self._zoneinfo,
+                self._timezone,
+                self._comment,
+                self._keywords,
+                self._dst,
+                self._utcoffset))
 
     def __str__(self):
         return str(tuple(self))
 
     def __repr__(self):
-        if self._path != None:
+        if self._path is not None:
             return "ChartFile('''%s''')" % self._path
         else:
             return repr(tuple(repr(x) for x in self))
-
 
 
 def _test():

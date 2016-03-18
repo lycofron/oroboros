@@ -19,8 +19,7 @@ if cfg.use_docutils:
 
 
 __all__ = ['html_data', 'html_planets', 'html_cusps', 'html_aspects',
-    'html_midpoints', 'html_interaspects']
-
+           'html_midpoints', 'html_interaspects']
 
 
 tr = lambda x, y=None: qApp.translate('chtdata.py', x, y)
@@ -71,8 +70,10 @@ def html_data(chart):
             'location': tr('Location'),
             'val': chart._location.decode(_encoding)}
     # latitude
-    fmt = unicode(tr('<b>%(latitude)s:</b> %(dg).2d%(deg)s %(dr)s %(mn).2d%(min)s %(sc).2d%(sec)s<br/>',
-        'Geo latitude display'))
+    fmt = unicode(
+        tr(
+            '<b>%(latitude)s:</b> %(dg).2d%(deg)s %(dr)s %(mn).2d%(min)s %(sc).2d%(sec)s<br/>',
+            'Geo latitude display'))
     txt += fmt % {
         'latitude': tr('Latitude'),
         'dg': chart._latitude.degrees,
@@ -83,8 +84,10 @@ def html_data(chart):
         'sc': chart._latitude.seconds,
         'sec': tr('"', 'Seconds')}
     # longitude
-    fmt = unicode(tr('<b>%(longitude)s:</b> %(dg).3d%(deg)s %(dr)s %(mn).2d%(min)s %(sc).2d%(sec)s<br/>',
-        'Geo longitude display'))
+    fmt = unicode(
+        tr(
+            '<b>%(longitude)s:</b> %(dg).3d%(deg)s %(dr)s %(mn).2d%(min)s %(sc).2d%(sec)s<br/>',
+            'Geo longitude display'))
     txt += fmt % {
         'longitude': tr('Longitude'),
         'dg': chart._longitude.degrees,
@@ -110,22 +113,27 @@ def html_data(chart):
             'country': tr('Country'),
             'val': chart._country.decode(_encoding)}
     # zoneinfo
-    zoneinfo = chart._zoneinfo if chart._zoneinfo not in (None, '') else tr('-', 'No zoneinfo')
+    zoneinfo = chart._zoneinfo if chart._zoneinfo not in (
+        None, '') else tr(
+        '-', 'No zoneinfo')
     fmt = unicode(tr('<b>%(zoneinfo)s:</b> %(val)s<br/>'))
     txt += fmt % {
         'zoneinfo': tr('Zoneinfo'),
         'val': zoneinfo}
     # timezone
-    timezone = chart._timezone if chart._timezone != None else tr('-', 'No timezone')
+    timezone = chart._timezone if chart._timezone is not None else tr(
+        '-', 'No timezone')
     fmt = unicode(tr('<b>%(timezone)s:</b> %(tzname)s<br/>'))
     txt += fmt % {
         'timezone': tr('Timezone'),
         'tzname': str(timezone)
-        }
+    }
     # utcoffset
-    utcoffset = chart.utcoffset if chart.utcoffset != None else tr('?', 'No utcoffset')
-    dst = tr('yes', 'dst') if chart.dst == True else tr('no', 'dst')
-    fmt = unicode(tr('<b>%(utcoffset)s:</b> %(offset)s  <b>%(dst)s:</b> %(bool)s<br/>'))
+    utcoffset = chart.utcoffset if chart.utcoffset is not None else tr(
+        '?', 'No utcoffset')
+    dst = tr('yes', 'dst') if chart.dst else tr('no', 'dst')
+    fmt = unicode(
+        tr('<b>%(utcoffset)s:</b> %(offset)s  <b>%(dst)s:</b> %(bool)s<br/>'))
     txt += fmt % {
         'utcoffset': tr('Utc offset'),
         'offset': utcoffset,
@@ -134,7 +142,9 @@ def html_data(chart):
     # comment
     if chart._comment != '':
         if cfg.use_docutils:
-            cmt = publish_parts(chart._comment, writer_name='html')['html_body']
+            cmt = publish_parts(
+                chart._comment,
+                writer_name='html')['html_body']
         else:
             cmt = chart._comment
     else:
@@ -184,14 +194,14 @@ def html_data(chart):
         txt += unicode(tr('%(moshier)s<br/>')) % {
             'moshier': tr('Moshier Ephemeris')}
     # zodiac type
-    if chart.filter._sid_mode == -1: ## tropical
+    if chart.filter._sid_mode == -1:  # tropical
         txt += unicode(tr('%(tropical)s, ')) % {
             'tropical': tr('Tropical')}
-    elif chart.filter._sid_mode < 255: ## ayanamsa
+    elif chart.filter._sid_mode < 255:  # ayanamsa
         txt += unicode(tr('%(ayanamsaname)s (%(ayanamsaut)s), ')) % {
             'ayanamsaname': swe.get_ayanamsa_name(chart.filter._sid_mode),
             'ayanamsaut': swe.get_ayanamsa_ut(chart.julday)}
-    elif chart.filter._sid_mode == 255: ## user-defined ayanamsa
+    elif chart.filter._sid_mode == 255:  # user-defined ayanamsa
         txt += unicode(tr('%(ayan)s (%(ayant0)s, %(t0)s), ')) % {
             'ayan': tr('Ayanamsa'),
             'ayant0': chart.filter._sid_ayan_t0,
@@ -218,7 +228,8 @@ def html_data(chart):
     try:
         lmtime = chart.local_mean_datetime
         y, mth, d, h, m, s = lmtime.timetuple()[:6]
-        fmt = unicode(tr('%(local_mean_time)s: %(year).4d-%(month).2d-%(day).2d %(hour).2d:%(minute).2d:%(second).2d<br/>'))
+        fmt = unicode(
+            tr('%(local_mean_time)s: %(year).4d-%(month).2d-%(day).2d %(hour).2d:%(minute).2d:%(second).2d<br/>'))
         txt += fmt % {
             'local_mean_time': tr('Local mean time'),
             'year': y,
@@ -227,8 +238,8 @@ def html_data(chart):
             'hour': h,
             'minute': m,
             'second': s
-            }
-    except ValueError: ## no timezone set
+        }
+    except ValueError:  # no timezone set
         pass
     # local sidereal time
     try:
@@ -240,11 +251,12 @@ def html_data(chart):
             'h': h,
             'mn': mn,
             'sc': sc}
-    except ValueError: ## no timezone set
+    except ValueError:  # no timezone set
         pass
     # obliquity
     dg, sn, mn, sc = swe._degsplit(chart.ecl_nut[0])
-    fmt = unicode(tr('%(obliquity)s: %(dg).2d%(deg)s %(mn).2d%(min)s %(sc).2d%(sec)s<br/>'))
+    fmt = unicode(
+        tr('%(obliquity)s: %(dg).2d%(deg)s %(mn).2d%(min)s %(sc).2d%(sec)s<br/>'))
     txt += fmt % {
         'obliquity': tr('Obliquity'),
         'dg': dg,
@@ -272,12 +284,12 @@ def html_data(chart):
         'deg': tr('\xb0', 'Degrees'),
         'min': tr("'", 'Minutes'),
         'sec': tr('"', 'Seconds')
-        }
+    }
     # delta T
     fmt = unicode(tr('%(deltat)s: %(val)s<hr/>'))
     txt += fmt % {
         'deltat': tr('Delta T'),
-        'val': swe.deltat(chart.julday)*86400} ## ?
+        'val': swe.deltat(chart.julday) * 86400}  # ?
 
     return txt
 
@@ -304,14 +316,16 @@ def _html_planets(res):
     sn = names.signs[swe._signtostr(sn)]
     try:
         plnt = names.objects[res._planet._name]
-    except KeyError: # fixed star?
+    except KeyError:  # fixed star?
         plnt = res._planet._name
     if res._lonspeed < 0:
         rx = tr('R', 'Retrograde')
     else:
         rx = ''
-    fmt = unicode(tr('<b>%(planet)s:</b> %(dg).2d%(deg)s %(sign)s %(mn).2d%(min)s %(sc).2d%(sec)s %(rx)s (%(lat)+.3f%(deg)s)<br/>',
-        'Planets display'))
+    fmt = unicode(
+        tr(
+            '<b>%(planet)s:</b> %(dg).2d%(deg)s %(sign)s %(mn).2d%(min)s %(sc).2d%(sec)s %(rx)s (%(lat)+.3f%(deg)s)<br/>',
+            'Planets display'))
     txt = fmt % {
         'planet': plnt,
         'dg': dg,
@@ -337,8 +351,10 @@ def html_cusps(cuspsres):
     txt = fmt % {
         'domification': tr('Domification'),
         'val': swe._house_system_name(cuspsres._hsys)}
-    fmt = unicode(tr('<b>%(house)s:</b> %(dg).2d%(deg)s %(sign)s %(mn).2d%(min)s %(sc).2d%(sec)s<br/>',
-        'Cusps display'))
+    fmt = unicode(
+        tr(
+            '<b>%(house)s:</b> %(dg).2d%(deg)s %(sign)s %(mn).2d%(min)s %(sc).2d%(sec)s<br/>',
+            'Cusps display'))
     if cuspsres._hsys == 'G':
         numcusps = 36
     else:
@@ -361,8 +377,10 @@ def html_cusps(cuspsres):
         dg, sn, mn, sc = swe._degsplit(elem._longitude)
         sn = names.signs[swe._signtostr(sn)]
         name = names.planets[elem._planet._name]
-        fmt = unicode(tr('%(ascmc)s: %(dg).2d%(deg)s %(sign)s %(mn).2d%(min)s %(sc).2d%(sec)s<br/>',
-            'Cusps additional display'))
+        fmt = unicode(
+            tr(
+                '%(ascmc)s: %(dg).2d%(deg)s %(sign)s %(mn).2d%(min)s %(sc).2d%(sec)s<br/>',
+                'Cusps additional display'))
         txt += fmt % {
             'ascmc': name,
             'dg': dg,
@@ -393,14 +411,16 @@ def _html_aspects(res):
     :type res: AspectData
     :rtype: str
     """
-    if res._apply == True:
+    if res._apply:
         applic = tr('A', 'Aspect applying')
     elif res._apply == False:
         applic = tr('S', 'Aspect separating')
     else:
         applic = tr('-', 'Aspect stable')
-    fmt = unicode(tr('%(p1)s <i>%(asp)s</i> %(p2)s %(delta)s%(diff).2f%(deg)s %(applic)s (%(factor).0f%%)<br/>',
-        'Aspect display'))
+    fmt = unicode(
+        tr(
+            '%(p1)s <i>%(asp)s</i> %(p2)s %(delta)s%(diff).2f%(deg)s %(applic)s (%(factor).0f%%)<br/>',
+            'Aspect display'))
     try:
         p1 = names.objects[res._data1._planet._name]
     except KeyError:
@@ -458,8 +478,10 @@ def _html_midpoints(res):
         rx = tr('R', 'Retrograde')
     else:
         rx = ''
-    fmt = unicode(tr('<b>%(planet1)s/%(planet2)s:</b> %(dg).2d%(deg)s %(sign)s %(mn).2d%(min)s %(sc).2d%(sec)s %(rx)s (%(lat)+.3f%(deg)s)<br/>',
-        'Midpoint display'))
+    fmt = unicode(
+        tr(
+            '<b>%(planet1)s/%(planet2)s:</b> %(dg).2d%(deg)s %(sign)s %(mn).2d%(min)s %(sc).2d%(sec)s %(rx)s (%(lat)+.3f%(deg)s)<br/>',
+            'Midpoint display'))
     txt = fmt % {
         'planet1': p1,
         'planet2': p2,
@@ -482,14 +504,16 @@ def _html_midp_aspects(res):
     :type res: MidPointAspectData
     :rtype: str
     """
-    if res._apply == True:
+    if res._apply:
         applic = tr('A', 'Aspect applying')
     elif res._apply == False:
         applic = tr('S', 'Aspect separating')
     else:
         applic = tr('-', 'Aspect stable')
-    fmt = unicode(tr('%(p1)s/%(p2)s <i>%(asp)s</i> %(p3)s %(delta)s%(diff).2f%(deg)s %(applic)s (%(factor).0f%%)<br/>',
-        'Midpoint aspect display'))
+    fmt = unicode(
+        tr(
+            '%(p1)s/%(p2)s <i>%(asp)s</i> %(p3)s %(delta)s%(diff).2f%(deg)s %(applic)s (%(factor).0f%%)<br/>',
+            'Midpoint aspect display'))
     try:
         p1 = names.objects[res._data1._data1._planet._name]
     except KeyError:
@@ -546,14 +570,16 @@ def _html_intermidp_aspects(res):
     :type res: InterMidPointAspect
     :rtype: str
     """
-    if res._apply == True:
+    if res._apply:
         applic = tr('A', 'Aspect applying')
     elif res._apply == False:
         applic = tr('S', 'Aspect separating')
     else:
         applic = tr('-', 'Aspect stable')
-    fmt = unicode(tr('%(p1)s/%(p2)s <i>%(asp)s</i> %(p3)s/%(p4)s %(delta)s%(diff).2f%(deg)s %(applic)s (%(factor).0f%%)<br/>',
-        'Midpoint aspect display'))
+    fmt = unicode(
+        tr(
+            '%(p1)s/%(p2)s <i>%(asp)s</i> %(p3)s/%(p4)s %(delta)s%(diff).2f%(deg)s %(applic)s (%(factor).0f%%)<br/>',
+            'Midpoint aspect display'))
     p1 = names.objects[res._data1._data1._planet._name]
     p2 = names.objects[res._data1._data2._planet._name]
     p3 = names.objects[res._data2._data1._planet._name]
@@ -571,7 +597,6 @@ def _html_intermidp_aspects(res):
         'applic': applic,
         'factor': res._factor * 100}
     return fmt % var
-
 
 
 # End.

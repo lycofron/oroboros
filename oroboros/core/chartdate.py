@@ -49,8 +49,12 @@ class ChartDate(ChartFile):
 
     """
 
-    __slots__ = ChartFile.__slots__ + ['_julday', '_local_datetime',
-        '_utc_datetime', '_local_mean_datetime', '_sidtime', '_local_sidtime']
+    __slots__ = ChartFile.__slots__ + ['_julday',
+                                       '_local_datetime',
+                                       '_utc_datetime',
+                                       '_local_mean_datetime',
+                                       '_sidtime',
+                                       '_local_sidtime']
 
     def _set_datetime(self, dt):
         ChartFile._set_datetime(self, dt)
@@ -92,15 +96,15 @@ class ChartDate(ChartFile):
         :rtype: bool
         :raise ValueError: date is ambiguous and user did not set DST info
         """
-        if self._dst == None: # try to guess
+        if self._dst is None:  # try to guess
             dst = self.local_datetime.dst()
-            if dst == None: # utcoffset has taken precedance
+            if dst is None:  # utcoffset has taken precedance
                 return False
             elif dst.seconds == 0:
                 return False
             else:
                 return True
-        else: # user-defined DST
+        else:  # user-defined DST
             return self._dst
 
     def _get_utcoffset(self):
@@ -113,9 +117,9 @@ class ChartDate(ChartFile):
         :rtype: float
         :raise ValueError: missing zoneinfo
         """
-        if self._utcoffset != None:
+        if self._utcoffset is not None:
             return self._utcoffset
-        else: # guess
+        else:  # guess
             if self._zoneinfo in (None, ''):
                 raise ValueError('Missing zoneinfo.')
             tz = pytz.timezone(self._zoneinfo)
@@ -130,7 +134,7 @@ class ChartDate(ChartFile):
 
         :rtype: float
         """
-        if self._julday == None:
+        if self._julday is None:
             self._julday = self._calc_julday()
         return self._julday
 
@@ -139,7 +143,7 @@ class ChartDate(ChartFile):
 
         :rtype: datetime
         """
-        if self._local_datetime == None:
+        if self._local_datetime is None:
             self._local_datetime = self._calc_local_datetime()
         return self._local_datetime
 
@@ -148,7 +152,7 @@ class ChartDate(ChartFile):
 
         :rtype: datetime
         """
-        if self._utc_datetime == None:
+        if self._utc_datetime is None:
             self._utc_datetime = self._calc_utc_datetime()
         return self._utc_datetime
 
@@ -157,7 +161,7 @@ class ChartDate(ChartFile):
 
         :rtype: datetime
         """
-        if self._local_mean_datetime == None:
+        if self._local_mean_datetime is None:
             self._local_mean_datetime = self._calc_local_mean_datetime()
         return self._local_mean_datetime
 
@@ -166,7 +170,7 @@ class ChartDate(ChartFile):
 
         :rtype: float
         """
-        if self._sidtime == None:
+        if self._sidtime is None:
             self._sidtime = self._calc_sidtime()
         return self._sidtime
 
@@ -175,53 +179,53 @@ class ChartDate(ChartFile):
 
         :rtype: time
         """
-        if self._local_sidtime == None:
+        if self._local_sidtime is None:
             self._local_sidtime = self._calc_local_sidtime()
         return self._local_sidtime
 
     path = property(ChartFile._get_path, ChartFile._set_path,
-        doc='Chart file path.')
+                    doc='Chart file path.')
     name = property(ChartFile._get_name, ChartFile._set_name,
-        doc='Chart name.')
+                    doc='Chart name.')
     datetime = property(ChartFile._get_datetime, _set_datetime,
-        doc='Chart date & time.')
+                        doc='Chart date & time.')
     calendar = property(ChartFile._get_calendar, _set_calendar,
-        doc="Chart calendar ('gregorian'|'julian').")
+                        doc="Chart calendar ('gregorian'|'julian').")
     location = property(ChartFile._get_location, ChartFile._set_location,
-        doc='Chart location.')
+                        doc='Chart location.')
     latitude = property(ChartFile._get_latitude, ChartFile._set_latitude,
-        doc='Chart latitude.')
+                        doc='Chart latitude.')
     longitude = property(ChartFile._get_longitude, _set_longitude,
-        doc='Chart longitude.')
+                         doc='Chart longitude.')
     altitude = property(ChartFile._get_altitude, ChartFile._set_altitude,
-        doc='Chart altitude.')
+                        doc='Chart altitude.')
     country = property(ChartFile._get_country, ChartFile._set_country,
-        doc='Chart country.')
+                       doc='Chart country.')
     zoneinfo = property(ChartFile._get_zoneinfo, _set_zoneinfo,
-        doc='Chart posix zoneinfo.')
+                        doc='Chart posix zoneinfo.')
     timezone = property(ChartFile._get_timezone, _set_timezone,
-        doc='Chart standard Utc timezone.')
+                        doc='Chart standard Utc timezone.')
     comment = property(ChartFile._get_comment, ChartFile._set_comment,
-        doc='Chart comment.')
+                       doc='Chart comment.')
     keywords = property(ChartFile._get_keywords, ChartFile._set_keywords,
-        doc='Chart keywords.')
+                        doc='Chart keywords.')
     dst = property(_get_dst, _set_dst,
-        doc='Chart DST (None|True|False), for ambiguous datetime.')
+                   doc='Chart DST (None|True|False), for ambiguous datetime.')
     utcoffset = property(_get_utcoffset, _set_utcoffset,
-        doc='Chart UTC offset, in hours, for dates < 1900.')
+                         doc='Chart UTC offset, in hours, for dates < 1900.')
     # Additional (read-only)
     julday = property(_get_julday,
-        doc='Chart Julian day.')
+                      doc='Chart Julian day.')
     local_datetime = property(_get_local_datetime,
-        doc='Chart local datetime.')
+                              doc='Chart local datetime.')
     utc_datetime = property(_get_utc_datetime,
-        doc='Chart Utc datetime.')
+                            doc='Chart Utc datetime.')
     local_mean_datetime = property(_get_local_mean_datetime,
-        doc='Chart local mean datetime.')
+                                   doc='Chart local mean datetime.')
     sidtime = property(_get_sidtime,
-        doc='Chart Gmt sidereal time')
+                       doc='Chart Gmt sidereal time')
     local_sidtime = property(_get_local_sidtime,
-        doc='Chart local sidereal time.')
+                             doc='Chart local sidereal time.')
 
     def _reset_datetime(self):
         """Trigger recalculation of date and time dependant info."""
@@ -243,10 +247,12 @@ class ChartDate(ChartFile):
         utc_dt = self.utc_datetime
         hour = utc_dt.hour + (utc_dt.minute / 60.0) + (utc_dt.second / 3600.0)
         if self.calendar in ('gregorian', None):
-            jd = swe.date_conversion(utc_dt.year, utc_dt.month, utc_dt.day, hour)
+            jd = swe.date_conversion(
+                utc_dt.year, utc_dt.month, utc_dt.day, hour)
         elif calendar == 'julian':
-            jd = swe.date_conversion(utc_dt.year, utc_dt.month, utc_dt.day, hour, 'j')
-        self._julday = jd[1] # further reading
+            jd = swe.date_conversion(
+                utc_dt.year, utc_dt.month, utc_dt.day, hour, 'j')
+        self._julday = jd[1]  # further reading
         return self._julday
 
     def _calc_utc_datetime(self):
@@ -258,16 +264,16 @@ class ChartDate(ChartFile):
 
         :rtype: datetime
         """
-        if self._utcoffset != None: # user-defined, below 1900
+        if self._utcoffset is not None:  # user-defined, below 1900
             tdelta = timedelta(hours=abs(self._utcoffset))
             if self._utcoffset >= 0:
                 utc_dt = self._datetime - tdelta
             else:
                 utc_dt = self._datetime + tdelta
             utc_dt = pytz.utc.localize(utc_dt)
-        else: # use zoneinfo and local datetime
+        else:  # use zoneinfo and local datetime
             utc_dt = self.local_datetime.astimezone(pytz.utc)
-        self._utc_datetime = utc_dt # further reading
+        self._utc_datetime = utc_dt  # further reading
         return utc_dt
 
     def _calc_local_datetime(self):
@@ -282,21 +288,21 @@ class ChartDate(ChartFile):
         :rtype: datetime
         :raise ValueError: datetime is ambiguous
         """
-        if self._utcoffset != None: # user-defined, below 1900
+        if self._utcoffset is not None:  # user-defined, below 1900
             loc_dt = self._datetime
-        else: # use zoneinfo and datetime
-            if self._zoneinfo == None: # assume it is utc
+        else:  # use zoneinfo and datetime
+            if self._zoneinfo is None:  # assume it is utc
                 loc_dt = pytz.utc.localize(self._datetime)
-            else: # zoneinfo is set
+            else:  # zoneinfo is set
                 tz = pytz.timezone(self._zoneinfo)
-                if self._dst != None: # user-defined, ambiguous
+                if self._dst is not None:  # user-defined, ambiguous
                     loc_dt = tz.localize(dt, is_dst=self._dst)
-                else: # check for ambiguous datetime
+                else:  # check for ambiguous datetime
                     loc_dt = tz.localize(self._datetime)
                     loc_dt_dst = tz.localize(self._datetime, is_dst=True)
                     if loc_dt != loc_dt_dst:
                         raise ValueError('Ambiguous datetime. Please set DST.')
-        self._local_datetime = loc_dt # further reading
+        self._local_datetime = loc_dt  # further reading
         return loc_dt
 
     def _calc_local_mean_datetime(self):
@@ -308,19 +314,19 @@ class ChartDate(ChartFile):
         :rtype: datetime
         :raise ValueError: missing timezone
         """
-        if self._timezone == None:
+        if self._timezone is None:
             raise ValueError('Missing timezone.')
         # get longitude correction
         diff = Decimal(str(self._timezone.longitude)) - (
-            self._longitude.to_decimal()) # degree arc difference
-        diff = diff * Decimal('240.0') # diff in time (seconds)
+            self._longitude.to_decimal())  # degree arc difference
+        diff = diff * Decimal('240.0')  # diff in time (seconds)
         delta = timedelta(seconds=float(diff))
         # get dst correction
         loc_dt = self.local_datetime
         dst = timedelta(seconds=loc_dt.tzinfo.dst(loc_dt).seconds)
         loc_mtime = loc_dt - (delta + dst)
         loc_mtime = datetime(*loc_mtime.timetuple()[:6])
-        self._local_mean_datetime = loc_mtime # further reading
+        self._local_mean_datetime = loc_mtime  # further reading
         return loc_mtime
 
     def _calc_sidtime(self):
@@ -329,7 +335,7 @@ class ChartDate(ChartFile):
         :rtype: float
         """
         sidt = swe.sidtime(self.julday)
-        self._sidtime = sidt # further reading
+        self._sidtime = sidt  # further reading
         return sidt
 
     def _calc_local_sidtime(self):
@@ -344,19 +350,19 @@ class ChartDate(ChartFile):
         jd = swe._julday(y, mth, d)
         midn = swe.sidtime(jd)
         midn = swe.split_deg(midn, 0)
-        midn = datetime(2000, 1, 1, hour=midn[0], minute=midn[1], second=midn[2],
-            microsecond=int(1.0000000000000001e-05 * midn[3]))
+        midn = datetime(2000, 1, 1, hour=midn[0], minute=midn[1], second=midn[
+                        2], microsecond=int(1.0000000000000001e-05 * midn[3]))
         # time with acceleration correction
-        tm = timedelta(hours=1.002737909 * (h + m/60.0 + s/3600.0))
+        tm = timedelta(hours=1.002737909 * (h + m / 60.0 + s / 3600.0))
         # with tz correction
-        corrtz = timedelta(seconds=10.0 * (self._timezone.longitude/15.0))
+        corrtz = timedelta(seconds=10.0 * (self._timezone.longitude / 15.0))
         loc_sidt = midn + (tm - corrtz)
         # southern -- commented
-        ##if self._latitude._direction == 'S':
+        # if self._latitude._direction == 'S':
         ##  loc_sidt += timedelta(hours=12)
         loc_sidt = time(hour=loc_sidt.hour, minute=loc_sidt.minute,
-            second=loc_sidt.second)
-        self._local_sidtime = loc_sidt # further reading
+                        second=loc_sidt.second)
+        self._local_sidtime = loc_sidt  # further reading
         return loc_sidt
 
     def __init__(self, path=None, set_default=True):
@@ -376,19 +382,35 @@ class ChartDate(ChartFile):
 
         :rtype: iterator
         """
-        return (x for x in (self._path, self._name, self._datetime,
-            self._calendar, self._location, self._latitude, self._longitude,
-            self._altitude, self._country, self._zoneinfo, self._timezone,
-            self._comment, self._keywords, self._dst, self._utcoffset,
-            self._julday, self._local_datetime, self._utc_datetime,
-            self._local_mean_datetime, self._sidtime, self._local_sidtime))
+        return (
+            x for x in (
+                self._path,
+                self._name,
+                self._datetime,
+                self._calendar,
+                self._location,
+                self._latitude,
+                self._longitude,
+                self._altitude,
+                self._country,
+                self._zoneinfo,
+                self._timezone,
+                self._comment,
+                self._keywords,
+                self._dst,
+                self._utcoffset,
+                self._julday,
+                self._local_datetime,
+                self._utc_datetime,
+                self._local_mean_datetime,
+                self._sidtime,
+                self._local_sidtime))
 
     def __repr__(self):
-        if self._path != None:
+        if self._path is not None:
             return "ChartDate('''%s''')" % self._path
         else:
             return repr(tuple(repr(x) for x in self))
-
 
 
 def _test():

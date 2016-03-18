@@ -61,12 +61,28 @@ from oroboros.core.filters import Filter
 import pytz
 
 
-__all__ = ['load', 'save',
-	'username', 'usermail', 'language', 'atlas_db', 'use_docutils',
-	'use_hg', 'hg_repo', 'hg_user', 'hg_pswd',
-	'dft_name', 'dft_location', 'dft_country', 'dft_zoneinfo', 'dft_timezone',
-	'dft_latitude', 'dft_longitude', 'dft_altitude', 'dft_comment',
-	'dft_filter']
+__all__ = [
+    'load',
+    'save',
+    'username',
+    'usermail',
+    'language',
+    'atlas_db',
+    'use_docutils',
+    'use_hg',
+    'hg_repo',
+    'hg_user',
+    'hg_pswd',
+    'dft_name',
+    'dft_location',
+    'dft_country',
+    'dft_zoneinfo',
+    'dft_timezone',
+    'dft_latitude',
+    'dft_longitude',
+    'dft_altitude',
+    'dft_comment',
+    'dft_filter']
 
 
 # config options
@@ -95,72 +111,84 @@ dft_comment = ''
 dft_filter = Filter()
 
 
-
 def load():
-	"""Load configuration options from database (set globals)."""
-	global username, usermail, language, atlas_db, charts_dir
-	global use_docutils, use_hg, hg_repo, hg_user, hg_pswd
-	global dft_name, dft_location, dft_country, dft_zoneinfo
-	global dft_timezone, dft_latitude, dft_longitude, dft_altitude
-	global dft_comment, dft_filter
-	# load
-	sql = "select * from Config;"
-	res = db.execute(sql).fetchone()
-	# set options
-	username = res[0]
-	usermail = res[1]
-	language = res[2]
-	atlas_db = res[3]
-	charts_dir = res[4]
-	use_docutils = bool(res[5])
-	use_hg = bool(res[6])
-	hg_repo = res[7]
-	hg_user = res[8]
-	hg_pswd = res[9]
-	dft_name = res[10]
-	dft_location = res[11]
-	dft_country = res[12]
-	if res[13] not in pytz.all_timezones:
-		raise ValueError('Invalid timezone %s.' % res[13])
-	else:
-		dft_zoneinfo = res[13]
-	dft_timezone = timezone.get(res[14]) if res[14] != '' else None
-	dft_latitude = geocoords.Latitude(*res[15].split(':'))
-	dft_longitude = geocoords.Longitude(*res[16].split(':'))
-	dft_altitude = geocoords.Altitude(int(res[17]))
-	dft_comment = res[18]
-	dft_filter = Filter(int(res[19]))
+    """Load configuration options from database (set globals)."""
+    global username, usermail, language, atlas_db, charts_dir
+    global use_docutils, use_hg, hg_repo, hg_user, hg_pswd
+    global dft_name, dft_location, dft_country, dft_zoneinfo
+    global dft_timezone, dft_latitude, dft_longitude, dft_altitude
+    global dft_comment, dft_filter
+    # load
+    sql = "select * from Config;"
+    res = db.execute(sql).fetchone()
+    # set options
+    username = res[0]
+    usermail = res[1]
+    language = res[2]
+    atlas_db = res[3]
+    charts_dir = res[4]
+    use_docutils = bool(res[5])
+    use_hg = bool(res[6])
+    hg_repo = res[7]
+    hg_user = res[8]
+    hg_pswd = res[9]
+    dft_name = res[10]
+    dft_location = res[11]
+    dft_country = res[12]
+    if res[13] not in pytz.all_timezones:
+        raise ValueError('Invalid timezone %s.' % res[13])
+    else:
+        dft_zoneinfo = res[13]
+    dft_timezone = timezone.get(res[14]) if res[14] != '' else None
+    dft_latitude = geocoords.Latitude(*res[15].split(':'))
+    dft_longitude = geocoords.Longitude(*res[16].split(':'))
+    dft_altitude = geocoords.Altitude(int(res[17]))
+    dft_comment = res[18]
+    dft_filter = Filter(int(res[19]))
 
 
 def save():
-	"""Save configuration options (globals) in database."""
-	global username, usermail, language, atlas_db, charts_dir, dft_location
-	global use_docutils, use_hg, hg_repo, hg_user, hg_pswd
-	global dft_country, dft_zoneinfo, dft_timezone, dft_latitude
-	global dft_longitude, dft_altitude, dft_filter
-	# save
-	sql = """update Config set username = ?, usermail = ?, language = ?,
+    """Save configuration options (globals) in database."""
+    global username, usermail, language, atlas_db, charts_dir, dft_location
+    global use_docutils, use_hg, hg_repo, hg_user, hg_pswd
+    global dft_country, dft_zoneinfo, dft_timezone, dft_latitude
+    global dft_longitude, dft_altitude, dft_filter
+    # save
+    sql = """update Config set username = ?, usermail = ?, language = ?,
 		atlas_db = ?, charts_dir = ?, use_docutils = ?, use_hg = ?, hg_repo = ?,
 		hg_user = ?, hg_pswd = ?, dft_location = ?, dft_country = ?,
 		dft_zoneinfo = ?, dft_timezone = ?, dft_latitude = ?, dft_longitude = ?,
 		dft_altitude = ?, dft_filter = ?;"""
-	var = (username, usermail, language, atlas_db, charts_dir,
-		int(use_docutils), int(use_hg), hg_repo, hg_user, hg_pswd,
-		dft_location, dft_country, dft_zoneinfo,
-		dft_timezone.utc if dft_timezone != None else '', str(dft_latitude),
-		str(dft_longitude), dft_altitude, dft_filter._idx_)
-	db.execute(sql, var)
-
+    var = (
+        username,
+        usermail,
+        language,
+        atlas_db,
+        charts_dir,
+        int(use_docutils),
+        int(use_hg),
+        hg_repo,
+        hg_user,
+        hg_pswd,
+        dft_location,
+        dft_country,
+        dft_zoneinfo,
+        dft_timezone.utc if dft_timezone is not None else '',
+        str(dft_latitude),
+        str(dft_longitude),
+        dft_altitude,
+        dft_filter._idx_)
+    db.execute(sql, var)
 
 
 def _test():
-	import doctest
-	doctest.testmod()
+    import doctest
+    doctest.testmod()
 
 
 if __name__ == "__main__":
-	_test()
-else: # get config options
-	load()
+    _test()
+else:  # get config options
+    load()
 
 # End.

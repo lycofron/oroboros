@@ -23,12 +23,11 @@ _baseDir = os.path.join(os.path.dirname(os.path.abspath(__file__)))
 
 
 def load(lng, app):
-	if lng not in languages:
-		return
-	ts = QTranslator(app)
-	ts.load('%s.qm' % lng, os.path.join(_baseDir, 'tr'))
-	app.installTranslator(ts)
-	
+    if lng not in languages:
+        return
+    ts = QTranslator(app)
+    ts.load('%s.qm' % lng, os.path.join(_baseDir, 'tr'))
+    app.installTranslator(ts)
 
 
 # End.

@@ -7,6 +7,7 @@
 
 from supybot.test import *
 
+
 class OroborosTestCase(PluginTestCase):
     plugins = ('Oroboros',)
 

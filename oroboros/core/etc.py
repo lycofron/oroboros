@@ -23,18 +23,18 @@ Importation of the module does read (and create) the config file.
 
 Copy original config file to home:
 
-	>>> create() # config already installed: should return False
-	False
+    >>> create() # config already installed: should return False
+    False
 
 Read your config and set module globals (done on explicit import):
 
-	>>> read()
-	True
+    >>> read()
+    True
 
 Get your config values:
 
-	>>> sqlite['path']
-	'~/.oroboros/oroboros.db'
+    >>> sqlite['path']
+    '~/.oroboros/oroboros.db'
 
 """
 
@@ -54,8 +54,8 @@ __all__ = ['read', 'exists', 'create', 'sqlite']
 #: Sqlite config section.
 #: :type sqlite: dict
 sqlite = {
-	'path': '~/.oroboros/oroboros.db'
-	}
+    'path': '~/.oroboros/oroboros.db'
+}
 
 
 # Paths:
@@ -95,115 +95,118 @@ original_file = 'etc.txt'
 
 
 def read(path=_path, force=False):
-	"""Read configuration and set globals.
-	
-	If user has no personal config, try to read system's config,
-	or current directory config.
-	Return True if something has been read; or False if nothing.
-	Set force=True if you want to re-read config file.
-	
-	:type path: str
-	:type force: bool
-	:rtype: bool
-	"""
-	# dont re-read config unless forcing
-	global exists
-	if not force:
-		if exists == True:
-			return True
-	# try to read user's config
-	ini = ConfigParser.SafeConfigParser()
-	c = ini.read(os.path.expanduser(path))
-	if len(c) != 0:
-		return _set_globals(ini)
-	# try to read system config
-	global _sysconf
-	ini = ConfigParser.SafeConfigParser()
-	c = ini.read(_sysconf)
-	if len(c) != 0:
-		return _set_globals(ini)
-	# try to read current dir config
-	global _baseconf
-	ini = ConfigParser.SafeConfigParser()
-	c = ini.read(_baseconf)
-	if len(c) != 0:
-		return _set_globals(ini)
-	# using default values...
-	return False
+    """Read configuration and set globals.
+
+    If user has no personal config, try to read system's config,
+    or current directory config.
+    Return True if something has been read; or False if nothing.
+    Set force=True if you want to re-read config file.
+
+    :type path: str
+    :type force: bool
+    :rtype: bool
+    """
+    # dont re-read config unless forcing
+    global exists
+    if not force:
+        if exists:
+            return True
+    # try to read user's config
+    ini = ConfigParser.SafeConfigParser()
+    c = ini.read(os.path.expanduser(path))
+    if len(c) != 0:
+        return _set_globals(ini)
+    # try to read system config
+    global _sysconf
+    ini = ConfigParser.SafeConfigParser()
+    c = ini.read(_sysconf)
+    if len(c) != 0:
+        return _set_globals(ini)
+    # try to read current dir config
+    global _baseconf
+    ini = ConfigParser.SafeConfigParser()
+    c = ini.read(_baseconf)
+    if len(c) != 0:
+        return _set_globals(ini)
+    # using default values...
+    return False
 
 
 def _set_globals(parser):
-	"""Set configuration globals using a config parser.
-	
-	By the way, sets the ``exists`` flag to True.
-	
-	:type parser: ConfigParser
-	:rtype: bool
-	"""
-	global exists, sqlite
-	if parser.has_option('sqlite', 'path'):
-		sqlite['path'] = parser.get('sqlite', 'path')
-	exists = True
-	return True
+    """Set configuration globals using a config parser.
+
+    By the way, sets the ``exists`` flag to True.
+
+    :type parser: ConfigParser
+    :rtype: bool
+    """
+    global exists, sqlite
+    if parser.has_option('sqlite', 'path'):
+        sqlite['path'] = parser.get('sqlite', 'path')
+    exists = True
+    return True
 
 
 def create(path=_path, create_dir=_dir):
-	"""Copy original config file to user's home.
-	
-	If needed, try to create a dedicated directory.
-	Return True; or False if something already exists.
-	
-	:type path: str
-	:type create_dir: str
-	:rtype: bool
-	"""
-	path = os.path.expanduser(path)
-	# check if file already exists
-	if (os.path.exists(path)):
-		return False
-	# check if dir exists
-	if create_dir not in (None, ''):
-		if not _create_dir(create_dir):
-			return False
-	# copy file
-	src = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-		original_file)
-	shutil.copyfile(src, path)
-	## chown and chmod file
-	os.chown(path, os.getuid(), os.getgid())
-	os.chmod(path, stat.S_IRUSR|stat.S_IWUSR)
-	return True
+    """Copy original config file to user's home.
+
+    If needed, try to create a dedicated directory.
+    Return True; or False if something already exists.
+
+    :type path: str
+    :type create_dir: str
+    :rtype: bool
+    """
+    path = os.path.expanduser(path)
+    # check if file already exists
+    if (os.path.exists(path)):
+        return False
+    # check if dir exists
+    if create_dir not in (None, ''):
+        if not _create_dir(create_dir):
+            return False
+    # copy file
+    src = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                       original_file)
+    shutil.copyfile(src, path)
+    # chown and chmod file
+    if 'chown' in dir(os):
+        # chown is not available in windows systems
+        # probably it doesn't matter
+        os.chown(path, os.getuid(), os.getgid())
+    os.chmod(path, stat.S_IRUSR | stat.S_IWUSR)
+    return True
 
 
 def _create_dir(path=_dir):
-	"""Create the personal oroboros directory (``~/.oroboros``).
-	
-	Return True; or False if something else than a directory already exists.
-	
-	:rtype: bool
-	"""
-	path = os.path.expanduser(path)
-	if (os.path.exists(path)):
-		if not (os.path.isdir(path)):
-			return False
-		else:
-			return True
-	else:
-		os.mkdir(path)
-		os.chmod(path, stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR)
-	return True
+    """Create the personal oroboros directory (``~/.oroboros``).
+
+    Return True; or False if something else than a directory already exists.
+
+    :rtype: bool
+    """
+    path = os.path.expanduser(path)
+    if (os.path.exists(path)):
+        if not (os.path.isdir(path)):
+            return False
+        else:
+            return True
+    else:
+        os.mkdir(path)
+        os.chmod(path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+    return True
 
 
 def _test():
-	import doctest
-	doctest.testmod()
+    import doctest
+    doctest.testmod()
 
 
 if __name__ == "__main__":
-	_test()
-else: # read config file on module import, or try to create it
-	if not read():
-		create()
-		read(force=True)
+    _test()
+else:  # read config file on module import, or try to create it
+    if not read():
+        create()
+        read(force=True)
 
 # End.

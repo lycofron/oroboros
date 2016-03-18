@@ -12,12 +12,11 @@ import oroboros
 
 
 if len(sys.argv) == 1:
-	from oroboros.gui.mainwin import main
-	main()
+    from oroboros.gui.mainwin import main
+    main()
 
 if len(sys.argv) > 2:
-	sys.exit('oroboros: too many arguments. Try "oroboros --help" instead.')
-
+    sys.exit('oroboros: too many arguments. Try "oroboros --help" instead.')
 
 
 disclaimer = """
@@ -48,11 +47,11 @@ Running on %s with Python %s.
 cmd = sys.argv[1]
 
 if cmd in ('-h', '--help'):
-	sys.exit(help_text)
+    sys.exit(help_text)
 elif cmd == '--version':
-	sys.exit(version_text)
+    sys.exit(version_text)
 else:
-	print('Ha ha ha ...!')
+    print('Ha ha ha ...!')
 
 
 # End.
